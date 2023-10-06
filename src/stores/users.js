@@ -1,31 +1,25 @@
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore("counter", {
+export const userStore = defineStore("users", {
 	state: () => ({
-		listUsers: [],
-		user: {},
+		userList: [],
+		userCurrent: {},
 	}),
-	getters: {
-		doubleCount: (state) => state.count * 2,
-	},
 	actions: {
-		increment() {
-			this.count++;
+		set_users(data) {
+			this.userList = data;
 		},
-		async fetchApi() {
-			return fetch("https://reqres.in/api/users")
-				.then((response) => response.json())
-				.then((data) => {
-					this.listUsers = data;
-				});
+		async change_page(data) {
+			this.userList = data;
 		},
-
-		async getUserId(id) {
-			return fetch(`https://reqres.in/api/users/${id}`)
-				.then((response) => response.json())
-				.then((data) => {
-					this.user = data;
-				});
+		searchUser(name) {
+			this.userList = this.userList.filter((user) => {
+				return user.name.toLowerCase().includes(name.toLowerCase());
+			});
 		},
+	},
+	getters: {
+		totalPages: (state) => state.userList.total_pages,
+		page: (state) => state.userList.page,
 	},
 });

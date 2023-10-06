@@ -1,25 +1,104 @@
 <script>
-import { useUserStore } from '../stores/users';
+import { userStore } from '../stores/users';
+import Spinner from './Spinner.vue';
 
+const store = userStore();
+const { user } = store;
 export default {
-    setup() {
-        const store = useUserStore();
-        const { user } = store;
-
-        // Accede al parámetro de ruta "id" usando $route.params.id
-        const userId = $route.params.id;
-
-        // Imprime el ID para verificar
-        console.log('user', userId);
-
-        return {
-            user,
-        };
+    name: "Detail",
+    components: {
+        Spinner
     },
-};
+    data() {
+        return {
+            user: {},
+            isLoading: true
+        }
+    },
+    methods: {
+        async getUserId(id) {
+            fetch(`https://reqres.in/api/users/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    this.user = data.data
+                    this.isLoading = false
+                })
+        }
+
+    },
+    mounted() {
+        this.getUserId(this.$route.params.id);
+    },
+    // Accede al parámetro de ruta "id" usando $route.params.id
+
+}
+
+// Imprime el ID para verificar
 
 </script>
 
+
 <template>
-    <h1>Details {{ user?.first_name }}</h1>
+    <div v-if="user && isLoading">
+        <Spinner></Spinner>
+    </div>
+    <div v-else class="detail-container">
+        <a href="/">Home</a>
+        <div class="user-info" v-if="user">
+            <h1>Name: {{ user?.first_name }} - {{ user?.last_name }}</h1>
+            <h1>Email: {{ user?.email }}</h1>
+            <img :src="user?.avatar" :alt="user?.first_name" class="user-avatar">
+        </div>
+        <div v-else>
+            <div class="loading-spinner">
+                <Spinner></Spinner>
+            </div>
+        </div>
+    </div>
 </template>
+  
+<style scoped>
+.detail-container {
+    text-align: center;
+    padding: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 26px;
+    border: #0f0e0e44 solid 1px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(244, 242, 242, 0.802);
+    transition: all 300ms;
+}
+
+.user-info {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #0f0e0e44;
+    box-shadow: 0 2px 4px rgba(244, 242, 242, 0.802);
+}
+
+h1 {
+    margin: 10px 0;
+    font-size: 20px;
+}
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: 10px;
+    object-fit: cover;
+}
+
+.loading-spinner {
+    margin-top: 20px;
+}
+</style>
+  

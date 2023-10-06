@@ -1,12 +1,13 @@
 <script>
-import { defineComponent } from 'vue';
 import router from "./router";
-export default defineComponent({
+
+export default {
   name: 'App',
   components: {
     router,
   },
-})
+
+}
 </script>
 
 <template>
