@@ -1,6 +1,6 @@
 # Proyecto de Gestión de Usuarios con Vue 3 y Pinia
 
-Este es un proyecto de ejemplo que utiliza Vue 3 y Pinia para crear una aplicación web de gestión de usuarios. La aplicación muestra una lista de usuarios y permite la navegación a los detalles de cada usuario.
+Este es un proyecto para prueba tecnica de Apping Lab, que utiliza Vue 3 y Pinia para crear una aplicación web de gestión de usuarios. La aplicación muestra una lista de usuarios y permite la navegación a los detalles de cada usuario.
 
 ![Vista previa de la aplicación](src/assets/vistaPrevia.png)
 
@@ -20,6 +20,8 @@ Este es un proyecto de ejemplo que utiliza Vue 3 y Pinia para crear una aplicaci
 - Navegación entre la lista de usuarios y los detalles individuales de cada usuario.
 - Paginación de la lista de usuarios para una mejor experiencia de usuario.
 - Carga asincrónica de datos desde una API externa (ReqRes.in) para simular un entorno real.
+- Busqueda de usuarios por nombre o por email.
+- Paginacion reactiva que muestra 6 usuarios por pagina.
 
 ## Instalación y Uso
 
@@ -40,7 +42,7 @@ Este es un proyecto de ejemplo que utiliza Vue 3 y Pinia para crear una aplicaci
 3. Installa las dependencias
 
    ```shell
-   npm install
+   npm o pnpm install
 
    ```
 
