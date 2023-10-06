@@ -3,9 +3,10 @@ import { userStore } from '../stores/users';
 import Search from './Search.vue';
 import Spinner from './Spinner.vue';
 import { onMounted, ref, watch } from 'vue';
+import { getUsersApi, getUserPage } from '../api';
 
 const store = userStore()
-const { get_data_api, userList, page, totalPages, change_page } = store;
+const { get_data_api, page, totalPages, change_page } = store;
 
 const isLoading = ref(true);
 const users = ref([]);
@@ -16,41 +17,33 @@ components: {
   Spinner,
     Search
 }
-function fetchData() {
+async function fetchData() {
+  const usersApi = await getUsersApi();
+  users.value = usersApi.data;
   isLoading.value = false;
-  users.value = userList.data
 }
+
 onMounted(() => {
   get_data_api();
   fetchData();
 })
 
 
-function prevPage() {
+async function prevPage() {
   if (currentPage.value > 1) {
     change_page(currentPage.value - 1);
-    fetch(`https://reqres.in/api/users?page=${currentPage.value - 1}`)
-      .then(res => res.json())
-      .then(data => {
-        users.value = data.data;
-
-      })
-      .catch(err => console.log(err));
+    const usersPrevPage = await getUserPage(currentPage.value - 1);
+    users.value = usersPrevPage.data;
     currentPage.value = currentPage.value - 1;
   }
 }
 
 
-function nextPage() {
+async function nextPage() {
   if (currentPage.value < totalPages) {
     change_page(currentPage.value + 1);
-    fetch(`https://reqres.in/api/users?page=${currentPage.value + 1}`)
-      .then(res => res.json())
-      .then(data => {
-        users.value = data.data;
-
-      })
-      .catch(err => console.log(err));
+    const usersNextPage = await getUserPage(currentPage.value + 1);
+    users.value = usersNextPage.data;
     currentPage.value = currentPage.value + 1;
   }
 }
