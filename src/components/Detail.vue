@@ -29,21 +29,18 @@ export default {
     mounted() {
         this.getUserId(this.$route.params.id);
     },
-    // Accede al parámetro de ruta "id" usando $route.params.id
 
 }
 
-// Imprime el ID para verificar
-
 </script>
-
 
 <template>
     <div v-if="user && isLoading">
         <Spinner></Spinner>
     </div>
     <div v-else class="detail-container">
-        <a href="/">Home</a>
+        <!-- <a href="/">Home</a> -->
+        <router-link class="router-link" :to="{ name: 'Home' }">Home</router-link>
         <div class="user-info" v-if="user">
             <h1>Name: {{ user?.first_name }} - {{ user?.last_name }}</h1>
             <h1>Email: {{ user?.email }}</h1>
@@ -76,6 +73,8 @@ a {
 }
 
 .user-info {
+    display: flex;
+    flex-direction: column;
     margin-top: 30px;
     padding: 20px;
     border: 1px solid #ddd;
@@ -84,9 +83,12 @@ a {
     box-shadow: 0 2px 4px rgba(244, 242, 242, 0.802);
 }
 
-h1 {
+.user-info h1 {
     margin: 10px 0;
     font-size: 20px;
+    color: #ebeff3;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .user-avatar {
@@ -99,6 +101,16 @@ h1 {
 
 .loading-spinner {
     margin-top: 20px;
+}
+
+.router-link {
+    font-family: 'Courier New', Courier, monospace;
+    color: #007bff;
+    cursor: pointer;
+
+    &:hover {
+        color: #ebeff3;
+    }
 }
 </style>
   

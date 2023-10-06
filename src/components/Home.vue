@@ -1,9 +1,72 @@
+<script setup>
+import { userStore } from '../stores/users';
+import Search from './Search.vue';
+import Spinner from './Spinner.vue';
+import { onMounted, ref, watch } from 'vue';
+
+const store = userStore()
+const { get_data_api, userList, page, totalPages, change_page } = store;
+
+const isLoading = ref(true);
+const users = ref([]);
+const currentPage = ref(page);
+
+
+components: {
+  Spinner,
+    Search
+}
+function fetchData() {
+  isLoading.value = false;
+  users.value = userList.data
+}
+onMounted(() => {
+  get_data_api();
+  fetchData();
+})
+
+
+function prevPage() {
+  if (currentPage.value > 1) {
+    change_page(currentPage.value - 1);
+    fetch(`https://reqres.in/api/users?page=${currentPage.value - 1}`)
+      .then(res => res.json())
+      .then(data => {
+        users.value = data.data;
+
+      })
+      .catch(err => console.log(err));
+    currentPage.value = currentPage.value - 1;
+  }
+}
+
+
+function nextPage() {
+  if (currentPage.value < totalPages) {
+    change_page(currentPage.value + 1);
+    fetch(`https://reqres.in/api/users?page=${currentPage.value + 1}`)
+      .then(res => res.json())
+      .then(data => {
+        users.value = data.data;
+
+      })
+      .catch(err => console.log(err));
+    currentPage.value = currentPage.value + 1;
+  }
+}
+
+
+</script>
+
 <template>
-  <div v-if="isLoading || !users">
+  <div v-if="store.error">
+    <p>Error {{ store.error }}</p>
+  </div>
+  <div v-else-if="isLoading || !users">
     <Spinner />
   </div>
   <div v-else class="card">
-    <input type="number" id="search" v-model="nameId" placeholder="Search..." />
+    <Search />
     <table class="user-table">
       <thead>
         <tr>
@@ -32,55 +95,17 @@
       </tbody>
 
     </table>
-    <Pagination />
+    <!-- paginacion -->
+
+    <div class="card">
+      <div class="pagination">
+        <button class="page-btn" @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+        <button class="page-btn" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      </div>
+    </div>
   </div>
 </template>
-
-<script setup>
-import { userStore } from '../stores/users';
-import Pagination from './Pagination.vue';
-import Spinner from './Spinner.vue';
-import { onMounted, ref, watchEffect } from 'vue';
-
-const store = userStore()
-const { set_users, userList } = store;
-
-const users = ref([]);
-const isLoading = ref(true);
-const nameId = ref(1)
-const API_URL = 'https://reqres.in/api/users';
-
-components: {
-  Pagination,
-    Spinner
-}
-
-function fetchData() {
-  fetch('https://reqres.in/api/users')
-    .then(res => res.json())
-    .then(data => {
-      users.value = data.data
-      set_users(data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  isLoading.value = false;
-  users.value = userList.data
-}
-
-
-// watchEffect(async () => {
-//   const url = `${API_URL}/${nameId.value}`
-//   users.value = await (await fetch(url)).json()
-//   isLoading.value = false
-// })
-
-onMounted(() => {
-  fetchData()
-})
-
-</script>
 
 <style scoped>
 .card {
@@ -99,12 +124,12 @@ h1 {
 .user-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 th,
 td {
-  padding: 13px;
+  padding: 8px;
   text-align: left;
 }
 
@@ -120,5 +145,34 @@ th {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.page-btn {
+  background-color: #044488;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.page-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.page-info {
+  margin: 0 15px;
+  font-size: 16px;
 }
 </style>
