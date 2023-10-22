@@ -32,11 +32,12 @@ export const userStore = defineStore("users", {
 		},
 
 		async search_user(nameOrEmail) {
-			this.userCurrent = this.userList.data.find(
+			const user = this.userList.data.find(
 				(user) =>
 					user.first_name.toLowerCase() === nameOrEmail.toLowerCase() ||
 					user.email.toLowerCase() === nameOrEmail.toLowerCase()
 			);
+			user ? (this.userCurrent = user) : alert("User not found");
 		},
 	},
 	getters: {

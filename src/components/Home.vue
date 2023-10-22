@@ -1,9 +1,59 @@
+<template>
+  <div v-if="store.error">
+    <p>Error {{ store.error }}</p>
+  </div>
+  <div v-else-if="isLoading || !users">
+    <Spinner />
+  </div>
+  <div v-else>
+    <Search />
+    <DataTable :value="users" tableStyle="min-width: 50rem">
+      <Column field="id" header="ID"></Column>
+      <Column field="first_name" header="First Name"></Column>
+      <Column field="last_name" header="Last Name"></Column>
+      <Column field="email" header="Email"></Column>
+      <Column header="Avatar">
+        <template #body="slotProps">
+          <img :src="slotProps.data.avatar" :alt="slotProps.data.first_name" class="user-avatar" />
+        </template>
+      </Column>
+      <Column field="detail">
+        <template #body="slotProps">
+          <router-link :to="{ name: 'Detail', params: { id: slotProps.data.id } }" class="router-link">
+            Detail
+          </router-link>
+        </template>
+      </Column>
+    </DataTable>
+    <!-- paginacion -->
+
+    <div class="card">
+      <div class="pagination">
+        <Button type="button" label="Yes" icon="pi pi-check" @click="prevPage"
+          :disabled="currentPage === 1">Previous</Button>
+        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+        <Button type="button" label="No" icon="pi pi-times" @click="nextPage"
+          :disabled="currentPage === totalPages">Next</Button>
+      </div>
+    </div>
+  </div>
+  <DynamicDialog />
+</template>
+
+
 <script setup>
 import { userStore } from '../stores/users';
 import Search from './Search.vue';
 import Spinner from './Spinner.vue';
 import { onMounted, ref, watch } from 'vue';
 import { getUsersApi, getUserPage } from '../api';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import DynamicDialog from 'primevue/dynamicdialog';
+import { useDialog } from "primevue/usedialog";
+import DataUserVue from './DataUser.vue';
+
+const dialog = useDialog();
 
 const store = userStore()
 const { get_data_api, page, totalPages, change_page } = store;
@@ -11,7 +61,6 @@ const { get_data_api, page, totalPages, change_page } = store;
 const isLoading = ref(true);
 const users = ref([]);
 const currentPage = ref(page);
-
 
 components: {
   Spinner,
@@ -47,62 +96,31 @@ async function nextPage() {
     currentPage.value = currentPage.value + 1;
   }
 }
+function showProducts(item) {
+  const dialogRef = dialog.open(DataUserVue, {
+    props: {
+      header: 'Users List',
+      style: {
+        width: '50vw',
+        height: '50vh',
+        backgroundColor: 'grey',
+      },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      modal: true
+    },
+  });
+}
 
 
 </script>
 
-<template>
-  <div v-if="store.error">
-    <p>Error {{ store.error }}</p>
-  </div>
-  <div v-else-if="isLoading || !users">
-    <Spinner />
-  </div>
-  <div v-else class="card">
-    <Search />
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Email</th>
-          <th>Avatar</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td>{{ user?.id }}</td>
-          <td>{{ user?.first_name }}</td>
-          <td>{{ user?.last_name }}</td>
-          <td>{{ user?.email }}</td>
-          <td>
-            <img :src="user?.avatar" :alt="user?.first_name" class="user-avatar">
-          </td>
-          <router-link :to="{ name: 'Detail', params: { id: user?.id } }">
-            <td>Detail...</td>
-          </router-link>
-
-        </tr>
-      </tbody>
-
-    </table>
-    <!-- paginacion -->
-
-    <div class="card">
-      <div class="pagination">
-        <button class="page-btn" @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
-        <button class="page-btn" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .card {
-  background-color: #1d1b1b00;
+  /* background-color: #1d1b1b00; */
   padding: 8px;
   border-radius: 5px;
   box-shadow: 2px 4px 6px rgba(32, 40, 97, 0.447);
@@ -127,7 +145,7 @@ td {
 }
 
 th {
-  background-color: #44466033;
+  /* background-color: #44466033; */
   font-weight: bold;
   border: 1px solid #cccccc0a;
 
@@ -149,7 +167,7 @@ th {
   margin-top: 20px;
 }
 
-.page-btn {
+/* .page-btn {
   background-color: #044488;
   color: #fff;
   border: none;
@@ -162,7 +180,7 @@ th {
 .page-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
+} */
 
 .page-info {
   margin: 0 15px;

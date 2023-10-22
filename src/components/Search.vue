@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { userStore } from '@/stores/users'
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+
 
 const store = userStore()
 
@@ -18,8 +21,8 @@ const getUser = () => {
         <p>Error {{ store.error }}</p>
     </div>
     <div v-else>
-        <input v-model="userNameOrEmail" type="text" placeholder="Enter name or email...">
-        <button @click="getUser">Get User</button>
+        <InputText v-model="userNameOrEmail" type="text" placeholder="Enter name or email..." />
+        <Button @click="getUser">Get User</Button>
         <div class="user-info" v-if="store.userCurrent">
             <div class="container-info">
                 <p>
