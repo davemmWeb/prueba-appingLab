@@ -1,68 +1,65 @@
 <template>
-    <div>
-
-        <DataTable :value="user" tableStyle="min-width: 30rem">
+    <div class="card">
+        <DataTable :value="permissios" scrollable scrollHeight="400px" tableStyle="min-width: 20rem">
             <Column field="id" header="ID"></Column>
-            <Column field="first_name" header="First Name"></Column>
-            <Column field="last_name" header="Last Name"></Column>
-            <Column field="email" header="Email"></Column>
-            <Column header="Image">
+            <Column field="name" header="Permissions"></Column>
+            <Column style="flex: 0 0 4rem">
                 <template #body="slotProps">
-                    <img :src="slotProps.data.avatar" :alt="slotProps.data.first_name" class="shadow-2 w-4rem" />
+                    <Button type="button" icon="pi pi-plus" text size="small" @click="toggleLock(slotProps.data)" />
                 </template>
-                <h1>Image</h1>
-            </Column>
-
-            <Column style="width:5rem">
-                <!-- <template #body="slotProps">
-                    <Button type="button" icon="pi pi-plus" text rounded @click="selectProduct(slotProps.data)"></Button>
-                </template> -->
-                <h1>Button</h1>
             </Column>
         </DataTable>
-        <div class="flex justify-content-end mt-1 mb-3">
-            <Button icon="pi pi-external-link" label="Nested Dialog" outlined severity="success" @click="showInfo" />
-        </div>
-
+    </div>
+    <div class="flex justify-content-end mt-1 mb-3">
+        <Button icon="pi pi-external-link" label="Show Permissions" outlined severity="success" @click="showInfo" />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
-import { useDialog } from "primevue/usedialog";
-import { getUserId } from '../api';
+import { ref, onMounted, inject } from 'vue';
+import { getPermissions } from '../api';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
+import Button from 'primevue/button';
+import { userStore } from '@/stores/users';
+import InfoUser from "./InfoUser.vue"
+import { useDialog } from "primevue/usedialog";
+
+const dialog = useDialog();
 
 const dialogRef = inject("dialogRef");
-const dialog = useDialog();
-const user = ref(null);
 
-async function getUser() {
-    const usersApi = await getUserId(dialogRef.value.data.user.id);
-    user.value = [usersApi.data];
+const permissios = ref();
+
+const store = userStore();
+
+const showMessage = ref(false);
+
+const { give_permission } = store;
+
+
+const toggleLock = (permissions) => {
+    give_permission(dialogRef.value.data.user.id, permissions);
 }
 
+const showInfo = () => {
+    dialog.open(InfoUser, {
+        props: {
+            header: "Permissions assigned",
+            style: { width: "30vw" },
+            modal: true,
+            dismissableMask: true,
+        },
+        data: {
+            user: dialogRef.value.data.user
+        }
+    });
+};
+
 onMounted(() => {
-    getUser();
+    permissios.value = getPermissions;
 });
 
-
-const selectProduct = (data) => {
-    dialogRef.value.close(data);
-};
-
-const showInfo = () => {
-    // dialog.open(InfoDemo, {
-    //     props: {
-    //         header: "Information",
-    //         modal: true,
-    //         dismissableMask: true,
-    //     },
-    //     data: {
-    //         totalProducts: products.value ? products.value.length : 0,
-    //     }
-    // });
-    alert("hola");
-};
 </script>
+
+

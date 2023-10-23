@@ -27,3 +27,56 @@ export const getUserId = async (id) => {
 		console.log("error", error);
 	}
 };
+
+export const getPermissions = [
+	{
+		id: 1001,
+		name: "Ver información de vuelos",
+		access: false,
+	},
+	{
+		id: 1002,
+		name: "Modificar itinerarios",
+		access: false,
+	},
+	{
+		id: 1003,
+		name: "Gestionar tripulación",
+		access: false,
+	},
+	{
+		id: 1004,
+		name: "Generar informes financieros",
+		access: false,
+	},
+	{
+		id: 1005,
+		name: "Gestionar usuarios",
+		access: false,
+	},
+	{
+		id: 1006,
+		name: "Gestionar permisos",
+		access: false,
+	},
+	{
+		id: 1007,
+		name: "Gestionar roles",
+		access: false,
+	},
+	{
+		id: 1008,
+		name: "Gestionar configuración",
+		access: false,
+	},
+	{
+		id: 1009,
+		name: "Gestionar aeronaves",
+		access: false,
+	},
+	{
+		id: 1010,
+		name: "Control de vuelos",
+		access: false,
+	},
+];

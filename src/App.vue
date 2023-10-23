@@ -10,16 +10,15 @@
           <img :src="slotProps.data.avatar" :alt="slotProps.data.first_name" class="user-avatar" />
         </template>
       </Column>
-      <Column header="Avatar">
+      <Column>
         <template #body="slotProps">
-          <Button label="Detail" link @click="showProducts(slotProps)" />
+          <Button label="permissions..." link @click="showProducts(slotProps)" />
         </template>
       </Column>
     </DataTable>
 
   </div>
   <div class="card flex justify-content-center">
-    <!-- <Button label="Select a User" icon="pi pi-search" @click="showProducts" /> -->
     <Toast />
     <DynamicDialog />
   </div>
@@ -33,6 +32,8 @@ import Button from "primevue/button";
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { getUsersApi } from './api';
+import { userStore } from '@/stores/users'
+
 const DataUser = defineAsyncComponent(() => import('./components/DataUser.vue'))
 
 const dialog = useDialog();
@@ -41,12 +42,14 @@ const toast = useToast();
 const users = ref([]);
 const isLoading = ref(true);
 
+const store = userStore();
+const { get_data_api } = store
 
 
 const showProducts = (user) => {
   const dialogRef = dialog.open(DataUser, {
     props: {
-      header: user.data.first_name,
+      header: 'Assigned permissions to ' + user.data.first_name + ' ' + user.data.last_name,
       style: {
         width: '50vw',
       },
@@ -74,10 +77,10 @@ const showProducts = (user) => {
   });
 }
 
-async function fetchData() {
-  const usersApi = await getUsersApi();
-  users.value = usersApi.data;
-  isLoading.value = false;
+const fetchData = async () => {
+  const userList = await get_data_api()
+  users.value = userList.data
+  // isLoading.value = false;
 }
 
 onMounted(() => {

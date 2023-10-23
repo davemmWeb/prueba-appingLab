@@ -20,7 +20,7 @@ import ToastService from "primevue/toastservice";
 import Dialog from "primevue/dialog";
 import DialogService from "primevue/dialogservice";
 import DynamicDialog from "primevue/dynamicdialog";
-
+import InlineMessage from "primevue/inlinemessage";
 import FocusTrap from "primevue/focustrap";
 
 const pinia = createPinia();
@@ -42,6 +42,7 @@ app.directive("focustrap", FocusTrap);
 app.component("Button", Button);
 app.component("Dialog", Dialog);
 app.component("DynamicDialog", DynamicDialog);
+app.component("InlineMessage", InlineMessage);
 
 app.use(DialogService);
 app.use(pinia);
